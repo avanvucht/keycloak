@@ -29,7 +29,21 @@ if [ "$1" == "TCPPING" ]; then
     stop-embedded-server
 __EOF
 
+
+  
+
+
 else
+
+  if [ "$1" == "S3_PING" -a -z "$EXTERNAL_ADDR" ]; then
+    if [ -f /sys/hypervisor/uuid -a "$(head -c 3 /sys/hypervisor/uuid)x" == "ec2x" ]; then
+      export EXTERNAL_ADDR=$(curl http://169.254.169.254/latest/meta-data/local-ipv4)
+      echo "[KEYCLOAK DOCKER IMAGE] Xen Hypervisor: Found EC2 container instance's IPv4 address: $EXTERNAL_ADDR"
+    elif [ -f /sys/class/dmi/id/bios_vendor -a "$(head -c 10 /sys/hypervisor/uuid)x" == "Amazon EC2x" ]; then
+      export EXTERNAL_ADDR=$(curl http://169.254.169.254/latest/meta-data/local-ipv4)
+      echo "[KEYCLOAK DOCKER IMAGE] AWS Hypervisor: Found EC2 container instance's IPv4 address: $EXTERNAL_ADDR"
+    fi
+  fi
 
   bin/jboss-cli.sh --file=cli/jgroups/$1/standalone-ha-configuration.cli
   rm -rf standalone/configuration/standalone_xml_history/current/*

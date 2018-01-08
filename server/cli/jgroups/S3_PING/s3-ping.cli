@@ -1,0 +1,4 @@
+/subsystem=jgroups/stack=tcp/transport=TCP:write-attribute(name=properties,value={external_addr=${env.EXTERNAL_ADDR:jboss.bind.address:127.0.0.1}})
+
+/subsystem=jgroups/stack=tcp/protocol=S3_PING:add
+/subsystem=jgroups/stack=tcp/protocol=S3_PING:write-attribute(name=properties,value={location=${env.S3_BUCKET},access_key=${env.ACCESS_KEY},secret_access_key=${env.SECRET_ACCESS_KEY}})

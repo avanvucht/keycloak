@@ -25,10 +25,13 @@ else
     echo "[KEYCLOAK DOCKER IMAGE] Using the embedded H2 database"
 fi
 
+args=("$@")
 if [ "$JGROUPS_SETUP" != "" ]; then
     echo "[KEYCLOAK DOCKER IMAGE] Using custom JGroups setup $JGROUPS_SETUP"
     /bin/sh /opt/jboss/keycloak/bin/change-jgroups.sh $JGROUPS_SETUP
+    args+=("--server-config")
+    args+=("standalone-ha.xml")
 fi
 
-exec /opt/jboss/keycloak/bin/standalone.sh $@
+exec /opt/jboss/keycloak/bin/standalone.sh "${args[@]}"
 exit $?
